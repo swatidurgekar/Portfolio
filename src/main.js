@@ -1,4 +1,4 @@
-import { scaleFactor } from "./constants";
+import { dialogueData, scaleFactor } from "./constants";
 import { k } from "./kaboomCtx";
 import { displayDialogue, setCamScale } from "./utils";
 
@@ -53,7 +53,10 @@ k.scene("main", async () => {
         if (boundary.name) {
           player.onCollide(boundary.name, () => {
             player.isInDialgue = true;
-            displayDialogue("TODO", () => (player.isInDialgue = false));
+            displayDialogue(
+              dialogueData[boundary.name],
+              () => (player.isInDialgue = false)
+            );
           });
         }
       }
@@ -71,6 +74,13 @@ k.scene("main", async () => {
         }
       }
     }
+    // if (layer.name === "ground2") {
+    //   player.isInDialgue = true;
+    //   displayDialogue(
+    //     dialogueData[boundary.name],
+    //     () => (player.isInDialgue = false)
+    //   );
+    // }
   }
 
   setCamScale(k);
@@ -104,7 +114,7 @@ k.scene("main", async () => {
 
     if (
       mouseAngle < -lowerBound &&
-      mouseAngle - upperBound &&
+      mouseAngle > -upperBound &&
       player.curAnim !== "walk-down"
     ) {
       player.play("walk-down");
@@ -121,7 +131,7 @@ k.scene("main", async () => {
     if (Math.abs(mouseAngle) < lowerBound) {
       player.flipX = true;
       if (player.curAnim !== "walk-side") player.play("walk-side");
-      player.direction = "true";
+      player.direction = "left";
       return;
     }
   });
@@ -137,6 +147,15 @@ k.scene("main", async () => {
     }
     player.play("idle-side");
   });
-});
 
+  function domLoaded() {
+    player.isInDialgue = true;
+    displayDialogue(
+      dialogueData.information,
+      () => (player.isInDialgue = false)
+    );
+  }
+
+  window.onload = domLoaded();
+});
 k.go("main");
